@@ -21,7 +21,7 @@ library(data.table)
 ```
  - Run the command and give the input file as an argument
 ```
-R --no-save '--args sisu' sacct_stats.R 
+R --no-save --args "taito-gpu" < sacct_stats.R
 ```
  - After the script completes you should have CSVs containing per-month and per-user data
 ```
