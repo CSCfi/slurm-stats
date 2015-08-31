@@ -50,7 +50,7 @@ dt$MaxDiskWrite=convb(dt$MaxDiskWrite)
 # User -based statistics as CSV
 
 setkey(dt,User)
-df2 <- dt[, list(count=.N, AllocCPUS_min=min(AllocCPUS), AllocCPUS_mean=mean(AllocCPUS), AllocCPUS_stddev=sd(AllocCPUS), AllocCPUS_max=max(AllocCPUS),
+dt2 <- dt[, list(count=.N, AllocCPUS_min=min(AllocCPUS), AllocCPUS_mean=mean(AllocCPUS), AllocCPUS_stddev=sd(AllocCPUS), AllocCPUS_max=max(AllocCPUS),
                      QueueTime_min=min(QueueTime), QueueTime_mean=mean(QueueTime), QueueTime_stddev=sd(QueueTime), QueueTime_max=max(QueueTime),
                      Elapsed_min=min(Elapsed),Elapsed_mean=mean(Elapsed), Elapsed_stddev=sd(Elapsed), Elapsed_max=max(Elapsed),
                      TimelimitAccuracy_min=min(TimelimitAccuracy),TimelimitAccuracy_mean=mean(TimelimitAccuracy), TimelimitAccuracy_stddev=sd(TimelimitAccuracy), TimelimitAccuracy_max=max(TimelimitAccuracy)
@@ -80,7 +80,7 @@ write.csv(dt3,file=paste(filename,"_stats_per_month.csv",sep=""))
 #CumulativeCoreCounts <- cumsum(CoreCounts)
 
 # Cumulative total time (core seconds)
-#TotalTimes <- table(df$TotalTime)
+#TotalTimes <- table(dt$TotalTime)
 #CumTotalTimes <- cumsum(TotalTimes)
 #plot(as.numeric(names(CumTotalTimes),CumTotalTimes))
 
