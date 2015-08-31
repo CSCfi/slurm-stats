@@ -23,7 +23,7 @@ library(data.table)
 ```
 R --no-save --args "taito-gpu" < sacct_stats.R
 ```
- - After the script completes you should have CSVs containing per-month and per-user data
+ - After the script completes you should have CSVs containing aggregations of per-month and per-user data
 ```
 sisu_stats_per_user.csv
 sisu_stats_per_month.csv
@@ -32,11 +32,13 @@ sisu_stats_per_month.csv
  - There are also some commented out lines at the end that generate other plots and statisics and can be used as basis for playing around with the data interactively
 
 ### Interpreting the data
+
 The resulting CSV files contain the following fields
- - *User* name or Date (Month/Year)
- - *Count* Number of jobs for the user or during the time period
-For the following statistics, minimum, mean, maximum and standard deviation (stddev) is provided
- - *AllocCPUS* Allocated CPUs
- - *QueueTime* Time spent queued (in seconds)
- - *Elapsed* Time spent running (in seconds)
- - *Timelimitaccuracy* Difference of timelimit vs. actual runtime (Elapsed/Timelimit)
+ - **User** name or Date (Month/Year)
+ - **Count** Number of jobs for the user or during the time period
+
+For the following statistics, minimum, mean, maximum and standard deviation (min,mean,max,stddev) is calculated
+ - **AllocCPUS** Allocated CPUs
+ - **QueueTime** Time spent queued (in seconds)
+ - **Elapsed** Time spent running (in seconds)
+ - **Timelimitaccuracy** Difference of timelimit vs. actual runtime (Elapsed/Timelimit)
