@@ -49,7 +49,9 @@ For the following statistics, minimum, mean, maximum and standard deviation (min
 You can use the same sacct output file as above but if you don't have it, the minimal set of data is the User, Partition, Submit and Start fields. 
 
 An example of the the very minimum feasible sacct command: 
-    sacct --format User,Partition,Submit,Start -s BF,CA,CD,F,NF,PR,TO -P -a -S 08/15 > sisu
+```
+sacct --format User,Partition,Submit,Start -s BF,CA,CD,F,NF,PR,TO -P -a -S 08/15 > sisu
+````
 
 ### Processing the data
  - Ensure that you have the [data.table](https://github.com/Rdatatable/data.table) library installed in R
