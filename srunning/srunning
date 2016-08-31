@@ -1,0 +1,76 @@
+#!/usr/bin/python
+import multiprocessing
+import subprocess
+import os
+import sys
+
+def get_job_details(job):
+    slurmNodes=job[0]
+    nodes=list(get_nodes(slurmNodes))
+    slurmId=job[1]
+    user=job[2]
+    slurmName=job[3]
+    slurmPartition=job[4]
+    nNodes=job[5]
+    nCores=job[6]
+    slurmResources=job[7]
+    getApplicationNameCommand = "ssh  %s top -bn 1 -u %s |grep %s |head -1 |gawk '{print $12}'|tr '\n' ' '" % (nodes[0], user, user)
+    pGetApplicationName = subprocess.Popen(getApplicationNameCommand, shell=True, stdout=subprocess.PIPE, stderr=DEVNULL)
+    name = pGetApplicationName.stdout.read()
+    return (slurmId, user, slurmName, name, slurmPartition, nNodes, nCores, slurmResources,slurmNodes)
+
+
+
+def get_nodes(s):
+    """ Converts slurm node lists to list with each node separately. 
+
+    >>> list(get_nodes('c[1-2,4]'))
+    [c1, c2, c4]
+    
+    """
+    s=s.replace("["," ").replace("]","")
+    nodeprefix=s[0]
+    nodeids=s[1:]
+    for x in nodeids.split(','):
+        elem = x.split('-')
+        if len(elem) == 1: # a number
+            yield nodeprefix + elem[0].strip()
+        elif len(elem) == 2: # a range inclusive
+            start, end = map(int, elem)
+            for i in xrange(start, end+1):
+                yield nodeprefix + str(i)
+        else: # more than one hyphen
+            raise ValueError('format error in %s' % x)
+
+if __name__ == '__main__':
+    total = len(sys.argv)
+    # Get the arguments list 
+    cmdargs = " ".join(sys.argv[1:])
+    #add default partitions
+    if total == 1:
+        cmdargs += "-p \"gpu,gpulong,gputest,mic\" "
+
+    #get list of currently running applications        
+    slurmJobList=[]
+    squeueCommand = " squeue -h " + cmdargs + " -t \"RUNNING\" -S \"D\" -o \"%N   %A %.10u %.50j %.9P %.3D %.4C  %.8b  \""
+    p = subprocess.Popen(squeueCommand, shell=True, stdout=subprocess.PIPE)    
+    for line in p.stdout.readlines():
+        slurmJobList.append(line.split())
+    p.wait()
+
+    #Get application name in parallel
+    #devnull to hide ssh errors (no key)
+    DEVNULL = open(os.devnull, 'wb')
+    #limit parallelism to some sane value
+    nJobs =  min( len(slurmJobList), 96)
+    pool = multiprocessing.Pool(nJobs)   
+    slurmId, user, slurmName, name, slurmPartition, nNodes, nCores, slurmResources, slurmNodes = zip(*pool.map(get_job_details, slurmJobList))
+    DEVNULL.close()                                                                                          
+
+    #print results
+    print "%10s %10s %40s %20s %10s %4s %5s %10s" %("#  slurmId ", "User ", "jobName ", "Application ", "Partition ", "nNodes ", "nCores ", "resources ")
+    for i in range(0, len(slurmId)):
+        print "%10s %10s %40s %20s %10s %4s %5s %10s %s" %(slurmId[i], user[i], slurmName[i], name[i], slurmPartition[i], nNodes[i], nCores[i], slurmResources[i], slurmNodes[i])
+
+
+    
