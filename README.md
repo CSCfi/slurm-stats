@@ -48,7 +48,7 @@ For the following statistics, minimum, mean, maximum and standard deviation (min
 ### Fetching data
 You can use the same sacct output file as above but if you don't have it, the minimal set of data is the User, Partition, Submit and Start fields. 
 
-An example of the the very minimum feasible sacct command: 
+An example of the very minimum feasible sacct command: 
 ```
 sacct --format User,Partition,Submit,Start -s BF,CA,CD,F,NF,PR,TO -P -a -S 08/15 > sisu
 ````
